@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Line Up Barber Co. — Book a Cut</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#191512;
+    --ink-soft:#2b241f;
+    --paper:#f4ebd9;
+    --paper-dim:#ece0c8;
+    --red:#a6332c;
+    --navy:#253a5e;
+    --gold:#c79a45;
+    --line:#ddd0b0;
+    --text-muted:#6b6258;
+    --text-on-dark:#efe6d4;
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'DM Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Bebas Neue', sans-serif;
+    letter-spacing:0.02em;
+    line-height:0.95;
+    margin:0;
+  }
+  .mono{font-family:'Space Mono', monospace;}
+  a{color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+  img,svg{display:block;max-width:100%;}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 24px;}
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    text-transform:uppercase;
+    letter-spacing:0.18em;
+    font-size:12px;
+    color:var(--red);
+  }
+  .eyebrow.on-dark{color:var(--gold);}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:var(--paper);
+    border-bottom:3px solid var(--ink);
+  }
+  .nav-inner{
+    max-width:1140px;margin:0 auto;padding:14px 24px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+  }
+  .logo{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:26px;
+    letter-spacing:0.03em;
+    display:flex;align-items:center;gap:10px;
+  }
+  .logo .dot{width:10px;height:10px;border-radius:50%;background:var(--red);display:inline-block;}
+  .nav-links{display:flex;gap:28px;align-items:center;}
+  .nav-links a{
+    font-size:14px;font-weight:500;text-decoration:none;color:var(--ink-soft);
+    position:relative;padding-bottom:2px;
+  }
+  .nav-links a:hover{color:var(--red);}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:12px 22px;border-radius:var(--radius);border:2px solid var(--ink);
+    font-weight:700;font-size:14px;text-decoration:none;
+    background:var(--ink);color:var(--paper);
+    transition:transform .15s ease, background .15s ease;
+  }
+  .btn:hover{background:var(--red);border-color:var(--red);transform:translateY(-1px);}
+  .btn.ghost{background:transparent;color:var(--ink);}
+  .btn.ghost:hover{background:var(--ink);color:var(--paper);}
+  .btn.small{padding:9px 16px;font-size:13px;}
+  .nav-links .btn{padding:9px 18px;font-size:13px;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:var(--ink);
+    color:var(--text-on-dark);
+    position:relative;
+    overflow:hidden;
+    border-bottom:6px solid var(--red);
+  }
+  .hero-inner{
+    max-width:1140px;margin:0 auto;padding:88px 24px 72px;
+    display:grid;grid-template-columns:1fr 200px;gap:48px;align-items:center;
+  }
+  .hero h1{
+    font-size:clamp(48px,8vw,96px);
+    color:var(--paper);
+  }
+  .hero h1 span{color:var(--red);}
+  .hero p.sub{
+    max-width:480px;margin-top:20px;font-size:17px;color:#c9bfa9;line-height:1.55;
+  }
+  .hero-ctas{display:flex;gap:14px;margin-top:32px;flex-wrap:wrap;}
+  .hero-stats{display:flex;gap:32px;margin-top:44px;}
+  .hero-stats div{font-family:'Space Mono';}
+  .hero-stats .num{font-size:22px;color:var(--gold);}
+  .hero-stats .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#9c927c;margin-top:4px;}
+
+  /* signature: animated barber pole */
+  .pole-wrap{display:flex;justify-content:center;}
+  .pole{
+    width:64px;height:340px;border-radius:32px;
+    background:repeating-linear-gradient(
+      45deg,
+      var(--red) 0 18px,
+      var(--paper) 18px 36px,
+      var(--navy) 36px 54px,
+      var(--paper) 54px 72px
+    );
+    background-size:100px 100px;
+    animation:spin-pole 1.6s linear infinite;
+    border:5px solid #0f0c0a;
+    box-shadow:inset 0 0 0 4px rgba(0,0,0,0.25), 0 12px 30px rgba(0,0,0,.4);
+    position:relative;
+  }
+  .pole::before,.pole::after{
+    content:"";position:absolute;left:-8px;right:-8px;height:20px;
+    background:#c9c2b4;border-radius:6px;border:2px solid #0f0c0a;
+  }
+  .pole::before{top:-14px;}
+  .pole::after{bottom:-14px;}
+  @keyframes spin-pole{ to { background-position:0 100px; } }
+  @media (prefers-reduced-motion: reduce){ .pole{animation:none;} }
+
+  .ticker{
+    background:var(--navy);color:var(--paper);
+    overflow:hidden;white-space:nowrap;border-bottom:3px solid var(--ink);
+  }
+  .ticker-track{
+    display:inline-block;padding:10px 0;
+    font-family:'Space Mono';font-size:13px;letter-spacing:.06em;
+    animation:ticker 22s linear infinite;
+  }
+  @keyframes ticker{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+  @media (prefers-reduced-motion: reduce){ .ticker-track{animation:none;} }
+
+  /* ---------- SECTION HEADERS ---------- */
+  section{padding:88px 0;}
+  .sec-head{max-width:640px;margin-bottom:48px;}
+  .sec-head h2{font-size:clamp(32px,5vw,52px);margin-top:8px;}
+  .sec-head p{color:var(--text-muted);margin-top:14px;font-size:16px;line-height:1.6;}
+  .on-dark .sec-head p{color:#a99f89;}
+
+  /* ---------- MENU ---------- */
+  .menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:40px 56px;}
+  .menu-col h3{
+    font-size:20px;font-family:'Space Mono';text-transform:uppercase;letter-spacing:.1em;
+    color:var(--red);border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:16px;
+  }
+  .menu-item{display:flex;align-items:baseline;gap:8px;padding:10px 0;border-bottom:1px dashed var(--line);}
+  .menu-item .name{font-weight:700;font-size:15px;}
+  .menu-item .desc{display:block;font-size:13px;color:var(--text-muted);font-weight:400;margin-top:2px;}
+  .menu-item .fill{flex:1;border-bottom:1px dotted var(--text-muted);transform:translateY(-4px);opacity:.5;}
+  .menu-item .price{font-family:'Space Mono';font-weight:700;font-size:15px;white-space:nowrap;}
+
+  /* ---------- STYLE GUIDE (dark) ---------- */
+  .on-dark{background:var(--ink);color:var(--text-on-dark);}
+  .style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .style-card{
+    background:var(--ink-soft);border:1px solid #3a3128;border-radius:var(--radius);
+    padding:26px;transition:transform .18s ease, border-color .18s ease;
+  }
+  .style-card:hover{transform:translateY(-4px);border-color:var(--gold);}
+  .style-card svg{width:44px;height:44px;stroke:var(--gold);margin-bottom:16px;}
+  .style-card h3{font-size:24px;color:var(--paper);}
+  .style-card p{font-size:14px;color:#a99f89;margin:10px 0 16px;line-height:1.55;}
+  .style-card .tag{
+    font-family:'Space Mono';font-size:12px;color:var(--gold);
+    border:1px solid var(--gold);display:inline-block;padding:4px 10px;border-radius:20px;
+  }
+
+  /* ---------- BOOKING ---------- */
+  .booking-panel{
+    background:var(--paper-dim);border:2px solid var(--ink);border-radius:var(--radius);
+    padding:36px;display:grid;grid-template-columns:1.3fr 1fr;gap:40px;
+  }
+  .step-label{font-family:'Space Mono';font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--red);margin-bottom:10px;display:block;}
+  .service-list{display:flex;flex-direction:column;gap:8px;margin-bottom:28px;}
+  .service-opt{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius);
+    background:var(--paper);cursor:pointer;transition:border-color .15s ease, background .15s ease;
+  }
+  .service-opt:hover{border-color:var(--red);}
+  .service-opt.selected{border-color:var(--red);background:#fbf3e2;box-shadow:inset 3px 0 0 var(--red);}
+  .service-opt .left{display:flex;align-items:center;gap:12px;}
+  .service-opt input{accent-color:var(--red);width:16px;height:16px;}
+  .service-opt .sname{font-weight:700;font-size:14px;}
+  .service-opt .smeta{font-family:'Space Mono';font-size:12px;color:var(--text-muted);}
+  .service-opt .sprice{font-family:'Space Mono';font-weight:700;}
+
+  .day-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:24px;}
+  .day-pill{
+    flex:0 0 auto;width:58px;text-align:center;padding:10px 4px;
+    border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);
+  }
+  .day-pill .wd{font-family:'Space Mono';font-size:10px;text-transform:uppercase;color:var(--text-muted);}
+  .day-pill .dn{font-family:'Bebas Neue';font-size:22px;margin-top:2px;}
+  .day-pill:not(.closed){cursor:pointer;}
+  .day-pill:not(.closed):hover{border-color:var(--red);}
+  .day-pill.selected{background:var(--ink);border-color:var(--ink);}
+  .day-pill.selected .wd,.day-pill.selected .dn{color:var(--paper);}
+  .day-pill.closed{opacity:.35;cursor:not-allowed;}
+
+  .slot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;}
+  .slot{
+    padding:9px 4px;text-align:center;border:1px solid var(--line);border-radius:var(--radius);
+    font-family:'Space Mono';font-size:12.5px;background:var(--paper);cursor:pointer;
+  }
+  .slot:hover{border-color:var(--red);}
+  .slot.selected{background:var(--red);border-color:var(--red);color:var(--paper);}
+  .slot.taken{opacity:.3;text-decoration:line-through;cursor:not-allowed;background:transparent;}
+
+  .summary-card{
+    background:var(--ink);color:var(--text-on-dark);border-radius:var(--radius);
+    padding:28px;display:flex;flex-direction:column;height:fit-content;
+  }
+  .summary-card h3{color:var(--paper);font-size:26px;}
+  .summary-line{display:flex;justify-content:space-between;font-size:14px;padding:9px 0;border-bottom:1px solid #3a3128;}
+  .summary-line .l{color:#a99f89;}
+  .summary-total{display:flex;justify-content:space-between;padding-top:14px;font-family:'Space Mono';font-weight:700;font-size:16px;color:var(--gold);}
+  .summary-empty{font-size:13px;color:#8c8271;padding:16px 0;}
+  .form-field{margin-top:14px;}
+  .form-field label{font-size:12px;color:#a99f89;display:block;margin-bottom:5px;font-family:'Space Mono';}
+  .form-field input{
+    width:100%;padding:11px 12px;border-radius:var(--radius);border:1px solid #4a3f33;
+    background:#221d18;color:var(--paper);font-family:'DM Sans';font-size:14px;
+  }
+  .form-field input:focus{outline:2px solid var(--gold);outline-offset:1px;}
+  .confirm-btn{
+    margin-top:20px;width:100%;padding:14px;background:var(--red);border:none;color:var(--paper);
+    font-weight:700;border-radius:var(--radius);font-size:14px;
+  }
+  .confirm-btn:hover{background:#c23f36;}
+  .confirm-msg{
+    margin-top:14px;font-size:13px;padding:12px;border-radius:var(--radius);display:none;
+  }
+  .confirm-msg.ok{display:block;background:#2b3a24;color:#c9e0b8;border:1px solid #4a6b39;}
+  .confirm-msg.err{display:block;background:#3a2424;color:#e0b8b8;border:1px solid #6b3939;}
+
+  /* ---------- BARBERS ---------- */
+  .barber-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+  .barber-card{text-align:center;padding:24px 14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--paper-dim);}
+  .avatar{
+    width:64px;height:64px;border-radius:50%;margin:0 auto 14px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Bebas Neue';font-size:22px;color:var(--paper);border:2px solid var(--ink);
+  }
+  .barber-card h3{font-size:20px;}
+  .barber-card .role{font-family:'Space Mono';font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;}
+  .barber-card .chair{font-size:12px;color:var(--text-muted);margin-top:8px;}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--ink);color:#a99f89;padding:56px 0 28px;border-top:6px solid var(--red);}
+  .foot-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:40px;padding-bottom:36px;border-bottom:1px solid #3a3128;}
+  .foot-grid h4{font-family:'Space Mono';font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:14px;}
+  .foot-grid .logo{color:var(--paper);margin-bottom:12px;}
+  .foot-grid p, .foot-grid li{font-size:14px;line-height:1.9;}
+  .foot-grid ul{list-style:none;padding:0;margin:0;}
+  .hours-row{display:flex;justify-content:space-between;font-family:'Space Mono';font-size:13px;}
+  .bottom-bar{padding-top:22px;display:flex;justify-content:space-between;font-size:12px;flex-wrap:wrap;gap:10px;}
+  .demo-note{font-size:12px;color:#7a7160;}
+
+  @media (max-width:860px){
+    .hero-inner{grid-template-columns:1fr;}
+    .pole-wrap{order:-1;}
+    .pole{height:160px;width:44px;}
+    .menu-grid{grid-template-columns:1fr;}
+    .style-grid{grid-template-columns:1fr 1fr;}
+    .booking-panel{grid-template-columns:1fr;}
+    .barber-grid{grid-template-columns:1fr 1fr;}
+    .foot-grid{grid-template-columns:1fr;gap:28px;}
+    .nav-links{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo"><span class="dot"></span>LINE&nbsp;UP <span style="color:var(--red)">CO.</span></div>
+    <div class="nav-links">
+      <a href="#menu">Menu</a>
+      <a href="#styles">Styles</a>
+      <a href="#booking">Book</a>
+      <a href="#barbers">Barbers</a>
+      <a href="#booking" class="btn">Book a Chair</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="eyebrow on-dark">Neighborhood barbershop · Est. walk-in friendly</span>
+      <h1 style="margin-top:14px;">CLEAN LINES.<br><span>NO WAITING.</span></h1>
+      <p class="sub">Fades, tapers, line-ups, and beard work — done right, on a schedule that actually holds. Book your chair online in under a minute.</p>
+      <div class="hero-ctas">
+        <a href="#booking" class="btn">Book a chair</a>
+        <a href="#menu" class="btn ghost" style="border-color:#efe6d4;color:#efe6d4;">See the menu</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="num">4</div><div class="lbl">chairs open</div></div>
+        <div><div class="num">15+</div><div class="lbl">yrs cutting</div></div>
+        <div><div class="num">$18</div><div class="lbl">line-ups from</div></div>
+      </div>
+    </div>
+    <div class="pole-wrap"><div class="pole"></div></div>
+  </div>
+</header>
+
+<div class="ticker">
+  <span class="ticker-track">WALK-INS WELCOME&nbsp;&nbsp;•&nbsp;&nbsp;FRESH FADES DAILY&nbsp;&nbsp;•&nbsp;&nbsp;BOOK ONLINE, SKIP THE WAIT&nbsp;&nbsp;•&nbsp;&nbsp;KIDS CUTS AVAILABLE&nbsp;&nbsp;•&nbsp;&nbsp;OPEN TUES–SUN&nbsp;&nbsp;•&nbsp;&nbsp;WALK-INS WELCOME&nbsp;&nbsp;•&nbsp;&nbsp;FRESH FADES DAILY&nbsp;&nbsp;•&nbsp;&nbsp;BOOK ONLINE, SKIP THE WAIT&nbsp;&nbsp;•&nbsp;&nbsp;KIDS CUTS AVAILABLE&nbsp;&nbsp;•&nbsp;&nbsp;OPEN TUES–SUN&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+</div>
+
+<section id="menu">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">The Menu</span>
+      <h2>Cuts, lines, washes &amp; combos</h2>
+      <p>Every service, priced straight — no surprise add-ons at the chair.</p>
+    </div>
+    <div class="menu-grid">
+      <div class="menu-col">
+        <h3>Cuts</h3>
+        <div class="menu-item"><span class="name">Skin Fade<span class="desc">Bald down to skin, blended tight</span></span><span class="fill"></span><span class="price mono">$32</span></div>
+        <div class="menu-item"><span class="name">Taper<span class="desc">Classic gradual fade, low or mid</span></span><span class="fill"></span><span class="price mono">$28</span></div>
+        <div class="menu-item"><span class="name">Buzz Cut<span class="desc">One length, clippers only</span></span><span class="fill"></span><span class="price mono">$20</span></div>
+        <div class="menu-item"><span class="name">Scissor Cut<span class="desc">Shears + texture, no clippers</span></span><span class="fill"></span><span class="price mono">$34</span></div>
+        <div class="menu-item"><span class="name">Kids Cut<span class="desc">12 &amp; under</span></span><span class="fill"></span><span class="price mono">$18</span></div>
+      </div>
+      <div class="menu-col">
+        <h3>Lines &amp; Beard</h3>
+        <div class="menu-item"><span class="name">Line-Up<span class="desc">Sharp edge-up, front &amp; sides</span></span><span class="fill"></span><span class="price mono">$18</span></div>
+        <div class="menu-item"><span class="name">Beard Trim<span class="desc">Shape + line, scissor or clipper</span></span><span class="fill"></span><span class="price mono">$16</span></div>
+        <div class="menu-item"><span class="name">Beard Sculpt<span class="desc">Full shape-up with hot towel</span></span><span class="fill"></span><span class="price mono">$24</span></div>
+        <div class="menu-item"><span class="name">Straight Razor Line<span class="desc">Razor-sharp hairline finish</span></span><span class="fill"></span><span class="price mono">$14</span></div>
+      </div>
+      <div class="menu-col">
+        <h3>Wash &amp; Treatment</h3>
+        <div class="menu-item"><span class="name">Shampoo &amp; Style<span class="desc">Wash, condition, blow-dry</span></span><span class="fill"></span><span class="price mono">$12</span></div>
+        <div class="menu-item"><span class="name">Hot Towel Refresh<span class="desc">Steam towel + scalp massage</span></span><span class="fill"></span><span class="price mono">$10</span></div>
+        <div class="menu-item"><span class="name">Deep Condition<span class="desc">Scalp treatment, 10 min</span></span><span class="fill"></span><span class="price mono">$15</span></div>
+      </div>
+      <div class="menu-col">
+        <h3>Combos</h3>
+        <div class="menu-item"><span class="name">Cut + Line-Up<span class="desc">Any cut, clean edge-up included</span></span><span class="fill"></span><span class="price mono">$42</span></div>
+        <div class="menu-item"><span class="name">Cut + Beard<span class="desc">Any cut + beard sculpt</span></span><span class="fill"></span><span class="price mono">$48</span></div>
+        <div class="menu-item"><span class="name">The Works<span class="desc">Cut, line-up, beard, hot towel</span></span><span class="fill"></span><span class="price mono">$58</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="styles" class="on-dark">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow on-dark">Style Guide</span>
+      <h2 style="color:var(--paper);">Not sure what to ask for?</h2>
+      <p>A quick reference for the chair — point at one, or bring your own.</p>
+    </div>
+    <div class="style-grid">
+      <div class="style-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round"><path d="M3 6h13M3 12h9M3 18h13M20 6l1 1-1 1M18 16l1 1-1 1"/></svg>
+        <h3>Skin Fade</h3>
+        <p>Hair fades all the way to skin at the sides, longer on top. High, mid, or low — your call.</p>
+        <span class="tag">from $32</span>
+      </div>
+      <div class="style-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round"><path d="M4 20c2-6 2-10 8-10s6 4 8 10M8 10c0-3 2-5 4-5s4 2 4 5"/></svg>
+        <h3>Pompadour</h3>
+        <p>Volume up front, swept back and up. Pairs well with a tapered or faded side.</p>
+        <span class="tag">from $34</span>
+      </div>
+      <div class="style-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="6" width="16" height="12" rx="2"/><path d="M4 10h16"/></svg>
+        <h3>Buzz Cut</h3>
+        <p>One guard, all over, no fuss. In and out in fifteen minutes.</p>
+        <span class="tag">from $20</span>
+      </div>
+      <div class="style-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg>
+        <h3>Line-Up</h3>
+        <p>A crisp, straight hairline at the front and temples. The finishing touch on any cut.</p>
+        <span class="tag">from $18</span>
+      </div>
+      <div class="style-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round"><path d="M6 12a6 6 0 0112 0c0 4-2 7-2 9H8c0-2-2-5-2-9z"/></svg>
+        <h3>Beard Sculpt</h3>
+        <p>Full shape-up along the jaw and cheek line, finished with a hot towel.</p>
+        <span class="tag">from $24</span>
+      </div>
+      <div class="style-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round"><path d="M4 4l16 16M4 20L20 4M12 12l3 3"/></svg>
+        <h3>Taper</h3>
+        <p>A gradual, low-contrast fade that keeps more length. The everyday classic.</p>
+        <span class="tag">from $28</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="booking">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Book a Chair</span>
+      <h2>Pick your services, pick your time</h2>
+      <p>Shop's open Tuesday through Sunday. Closed Mondays.</p>
+    </div>
+
+    <div class="booking-panel">
+      <div>
+        <span class="step-label">Step 1 — Services</span>
+        <div class="service-list" id="serviceList"></div>
+
+        <span class="step-label">Step 2 — Date</span>
+        <div class="day-row" id="dayRow"></div>
+
+        <span class="step-label">Step 3 — Time</span>
+        <div class="slot-grid" id="slotGrid"></div>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Pick a date above to see open times.</p>
+      </div>
+
+      <div class="summary-card">
+        <h3>Your Booking</h3>
+        <div id="summaryLines"><div class="summary-empty">No services selected yet.</div></div>
+        <div class="summary-total" id="summaryTotal" style="display:none;">
+          <span>Total</span><span id="totalAmt">$0</span>
+        </div>
+
+        <div class="form-field">
+          <label for="fname">Name</label>
+          <input id="fname" type="text" placeholder="Full name">
+        </div>
+        <div class="form-field">
+          <label for="fphone">Phone or email</label>
+          <input id="fphone" type="text" placeholder="For your confirmation">
+        </div>
+
+        <button class="confirm-btn" id="confirmBtn">Confirm Booking</button>
+        <div class="confirm-msg" id="confirmMsg"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="barbers">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">The Chairs</span>
+      <h2>Who's cutting today</h2>
+      <p>Every barber trained in fades, lines, and beard work. Request one by name at booking.</p>
+    </div>
+    <div class="barber-grid">
+      <div class="barber-card"><div class="avatar" style="background:var(--red);">DM</div><h3>Darnell M.</h3><div class="role">Fades &amp; Tapers</div><div class="chair">Chair 1</div></div>
+      <div class="barber-card"><div class="avatar" style="background:var(--navy);">RC</div><h3>Rico C.</h3><div class="role">Beard Specialist</div><div class="chair">Chair 2</div></div>
+      <div class="barber-card"><div class="avatar" style="background:var(--gold);">TW</div><h3>Tay W.</h3><div class="role">Classic Cuts</div><div class="chair">Chair 3</div></div>
+      <div class="barber-card"><div class="avatar" style="background:var(--ink);">JB</div><h3>Jamal B.</h3><div class="role">Kids &amp; Line-Ups</div><div class="chair">Chair 4</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo">LINE&nbsp;UP <span style="color:var(--red)">CO.</span></div>
+        <p>A neighborhood barbershop for clean fades, sharp lines, and no wasted time in the chair.</p>
+      </div>
+      <div>
+        <h4>Hours</h4>
+        <div class="hours-row"><span>Tue – Fri</span><span>10a – 7p</span></div>
+        <div class="hours-row"><span>Saturday</span><span>9a – 6p</span></div>
+        <div class="hours-row"><span>Sunday</span><span>11a – 4p</span></div>
+        <div class="hours-row"><span>Monday</span><span>Closed</span></div>
+      </div>
+      <div>
+        <h4>Visit</h4>
+        <ul>
+          <li>412 Cedar Ave, your city</li>
+          <li>(555) 019-2244</li>
+          <li>hello@lineupbarber.co</li>
+        </ul>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <span>© 2026 Line Up Barber Co.</span>
+      <span class="demo-note">Demo site — built to preview design &amp; booking flow.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---- Services data ----
+  const services = [
+    {id:'fade', name:'Skin Fade', meta:'45 min', price:32},
+    {id:'taper', name:'Taper', meta:'40 min', price:28},
+    {id:'lineup', name:'Line-Up', meta:'15 min', price:18},
+    {id:'beard', name:'Beard Sculpt', meta:'20 min', price:24},
+    {id:'wash', name:'Hot Towel Refresh', meta:'10 min', price:10},
+    {id:'works', name:'The Works (cut+line+beard+towel)', meta:'70 min', price:58},
+  ];
+  const selected = new Set();
+
+  const serviceList = document.getElementById('serviceList');
+  services.forEach(s => {
+    const row = document.createElement('label');
+    row.className = 'service-opt';
+    row.dataset.id = s.id;
+    row.innerHTML = `
+      <div class="left">
+        <input type="checkbox" value="${s.id}">
+        <div>
+          <div class="sname">${s.name}</div>
+          <div class="smeta">${s.meta}</div>
+        </div>
+      </div>
+      <div class="sprice">$${s.price}</div>`;
+    const cb = row.querySelector('input');
+    cb.addEventListener('change', () => {
+      if (cb.checked) { selected.add(s.id); row.classList.add('selected'); }
+      else { selected.delete(s.id); row.classList.remove('selected'); }
+      renderSummary();
+    });
+    serviceList.appendChild(row);
+  });
+
+  // ---- Day picker (next 14 days, shop closed Mondays) ----
+  const dayRow = document.getElementById('dayRow');
+  const weekdays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let chosenDate = null;
+  const today = new Date();
+
+  for (let i = 1; i <= 14; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    const closed = d.getDay() === 1; // Monday closed
+    const pill = document.createElement('div');
+    pill.className = 'day-pill' + (closed ? ' closed' : '');
+    pill.innerHTML = `<div class="wd">${weekdays[d.getDay()]}</div><div class="dn">${d.getDate()}</div>`;
+    if (!closed) {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.day-pill').forEach(p => p.classList.remove('selected'));
+        pill.classList.add('selected');
+        chosenDate = `${weekdays[d.getDay()]} ${d.toLocaleDateString(undefined,{month:'short', day:'numeric'})}`;
+        renderSlots();
+      });
+    }
+    dayRow.appendChild(pill);
+  }
+
+  // ---- Time slots ----
+  const slotGrid = document.getElementById('slotGrid');
+  let chosenSlot = null;
+  function renderSlots(){
+    slotGrid.innerHTML = '';
+    chosenSlot = null;
+    const times = ['9:00','9:45','10:30','11:15','12:00','12:45','1:30','2:15','3:00','3:45','4:30','5:15'];
+    times.forEach((t, idx) => {
+      const taken = (idx % 5 === 0); // mock some booked slots
+      const el = document.createElement('div');
+      el.className = 'slot' + (taken ? ' taken' : '');
+      el.textContent = t;
+      if (!taken) {
+        el.addEventListener('click', () => {
+          document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+          el.classList.add('selected');
+          chosenSlot = t;
+          renderSummary();
+        });
+      }
+      slotGrid.appendChild(el);
+    });
+  }
+
+  // ---- Summary ----
+  const summaryLines = document.getElementById('summaryLines');
+  const summaryTotal = document.getElementById('summaryTotal');
+  const totalAmt = document.getElementById('totalAmt');
+
+  function renderSummary(){
+    if (selected.size === 0) {
+      summaryLines.innerHTML = '<div class="summary-empty">No services selected yet.</div>';
+      summaryTotal.style.display = 'none';
+      return;
+    }
+    let total = 0;
+    summaryLines.innerHTML = '';
+    services.filter(s => selected.has(s.id)).forEach(s => {
+      total += s.price;
+      const line = document.createElement('div');
+      line.className = 'summary-line';
+      line.innerHTML = `<span class="l">${s.name}</span><span>$${s.price}</span>`;
+      summaryLines.appendChild(line);
+    });
+    if (chosenDate) {
+      const line = document.createElement('div');
+      line.className = 'summary-line';
+      line.innerHTML = `<span class="l">Date</span><span>${chosenDate}</span>`;
+      summaryLines.appendChild(line);
+    }
+    if (chosenSlot) {
+      const line = document.createElement('div');
+      line.className = 'summary-line';
+      line.innerHTML = `<span class="l">Time</span><span>${chosenSlot}</span>`;
+      summaryLines.appendChild(line);
+    }
+    totalAmt.textContent = `$${total}`;
+    summaryTotal.style.display = 'flex';
+  }
+
+  // ---- Confirm ----
+  const confirmBtn = document.getElementById('confirmBtn');
+  const confirmMsg = document.getElementById('confirmMsg');
+  confirmBtn.addEventListener('click', () => {
+    const name = document.getElementById('fname').value.trim();
+    const contact = document.getElementById('fphone').value.trim();
+    if (selected.size === 0) {
+      confirmMsg.className = 'confirm-msg err';
+      confirmMsg.textContent = 'Pick at least one service first.';
+      return;
+    }
+    if (!chosenDate || !chosenSlot) {
+      confirmMsg.className = 'confirm-msg err';
+      confirmMsg.textContent = 'Choose a date and time for your visit.';
+      return;
+    }
+    if (!name || !contact) {
+      confirmMsg.className = 'confirm-msg err';
+      confirmMsg.textContent = 'Add your name and a way to reach you.';
+      return;
+    }
+    confirmMsg.className = 'confirm-msg ok';
+    confirmMsg.textContent = `You're booked, ${name.split(' ')[0]} — ${chosenDate} at ${chosenSlot}. Confirmation sent to ${contact}.`;
+  });
+
+  renderSummary();
+</script>
+
+</body>
+</html>
